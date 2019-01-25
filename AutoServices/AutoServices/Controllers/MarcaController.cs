@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.DTOs;
+using Application.IServices;
 using AutoServices.Models.Repositories;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -13,48 +15,45 @@ namespace AutoServices.Controllers
     [Route("api/[controller]")]
     public class MarcaController : Controller
     {
-        private IMarcaRepository repositorio;
-        public MarcaController(IMarcaRepository repo)
+        private IMarcaService Service;
+        public MarcaController(IMarcaService service)
         {
-            repositorio = repo;
+            Service = service;
         }
-
         // GET: api/<controller>
         [HttpGet]
-        public IQueryable<TMarca> Get()
+        public IList<MarcaDTO> Get()
         {
-            return repositorio.Items;
+            return Service.GetAll();
         }
-
         // GET api/<controller>/5
         [HttpGet("{MarcaId}")]
-        public TMarca Get(Guid MarcaId)
+        
+        public MarcaDTO Get(Guid MarcaId)
         {
-            return repositorio.Items.Where(p => p.MarcaId == MarcaId).FirstOrDefault();
-        }
 
+            return Service.GetAll().Where(p => p.MarcaId == MarcaId).FirstOrDefault();
+        }
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]TMarca marca)
+        public async Task<IActionResult> Post([FromBody]MarcaDTO marca)
         {
-            await repositorio.Save(marca);
+            await Service.Insert(marca);
             return Ok(true);
         }
-
         // PUT api/<controller>/5
         [HttpPut("{MarcaId}")]
-        public async Task<IActionResult> Put(Guid MarcaId, [FromBody]TMarca marca)
+        public async Task<IActionResult> Put(Guid MarcaId, [FromBody]MarcaDTO marca)
         {
             marca.MarcaId = MarcaId;
-            await repositorio.Save(marca);
+            await Service.Insert(marca);
             return Ok(true);
         }
-
         // DELETE api/<controller>/5
         [HttpDelete("{MarcaId}")]
         public IActionResult Delete(Guid MarcaId)
         {
-            repositorio.Delete(MarcaId);
+            Service.Delete(MarcaId);
             return Ok(true);
         }
     }

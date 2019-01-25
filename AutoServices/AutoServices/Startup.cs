@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoServices.Models;
 using AutoServices.Models.Repositories;
 using Domain;
+using Application.IServices;
+using Application.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
+using Domain.IRepositories;
 
 namespace AutoServices
 {
@@ -39,7 +42,10 @@ namespace AutoServices
 
             services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<AppIdentityDbContext>()
-            .AddDefaultTokenProviders();            services.AddTransient<IMarcaRepository, EFMarcaRepository>();            services.AddTransient<IAutoRepository, EFAutoRepository>();
+            .AddDefaultTokenProviders();            services.AddTransient<IMarcaRepository, EFMarcaRepository>();            services.AddTransient<IAutoRepository, EFAutoRepository>();
+
+            //DE LOS SERVICIOS
+            services.AddTransient<IMarcaService, MarcaService>();            services.AddTransient<IAutoService, AutoService>();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info { Title = "AutoServices", Version = "v1" });
             });            

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.DTOs;
+using Application.IServices;
 using AutoServices.Models.Repositories;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -13,48 +15,45 @@ namespace AutoServices.Controllers
     [Route("api/[controller]")]
     public class AutoController : Controller
     {
-        private IAutoRepository repositorio;
-        public AutoController(IAutoRepository repo)
+        private IAutoService Service;
+        public AutoController(IAutoService service)
         {
-            repositorio = repo;
+            Service = service;
         }
-
         // GET: api/<controller>
         [HttpGet]
-        public IQueryable<TAuto> Get()
+        public IList<AutoDTO> Get()
         {
-            return repositorio.Items;
+            return Service.GetAll();
         }
-
         // GET api/<controller>/5
         [HttpGet("{AutoId}")]
-        public TAuto Get(Guid AutoId)
-        {
-            return repositorio.Items.Where(p => p.AutoId == AutoId).FirstOrDefault();
-        }
 
+        public AutoDTO Get(Guid AutoId)
+        {
+
+            return Service.GetAll().Where(p => p.AutoId == AutoId).FirstOrDefault();
+        }
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]TAuto auto)
+        public async Task<IActionResult> Post([FromBody]AutoDTO auto)
         {
-            await repositorio.Save(auto);
+            await Service.Insert(auto);
             return Ok(true);
         }
-
         // PUT api/<controller>/5
         [HttpPut("{AutoId}")]
-        public async Task<IActionResult> Put(Guid AutoId, [FromBody]TAuto auto)
+        public async Task<IActionResult> Put(Guid AutoId, [FromBody]AutoDTO auto)
         {
             auto.AutoId = AutoId;
-            await repositorio.Save(auto);
+            await Service.Insert(auto);
             return Ok(true);
         }
-
         // DELETE api/<controller>/5
         [HttpDelete("{AutoId}")]
         public IActionResult Delete(Guid AutoId)
         {
-            repositorio.Delete(AutoId);
+            Service.Delete(AutoId);
             return Ok(true);
         }
     }
